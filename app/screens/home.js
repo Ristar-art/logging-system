@@ -6,7 +6,7 @@ const { width, height } = Dimensions.get("window");
 const image = {
   width: width,
   height: height,
-  uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Urk%C3%A4llan.svg/240px-Urk%C3%A4llan.svg.png',
+  uri: 'https://www.clker.com/cliparts/Q/f/3/y/a/9/yin-yang-hi.png',
 };
 
 export default function Home({navigation}) {

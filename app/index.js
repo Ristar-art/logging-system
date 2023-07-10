@@ -6,11 +6,11 @@ import Navigator from './routes/homeStacks'
 export default function Page() {
 
   return (
-    <TouchableWithoutFeedback onPress={()=>{Keyboard.dismiss()}}>
+   
       <SafeAreaView style={styles.container}>
         <Navigator/>
       </SafeAreaView>
-    </TouchableWithoutFeedback>
+   
   );
 }
 

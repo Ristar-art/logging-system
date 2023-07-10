@@ -4,7 +4,7 @@ import axios from 'axios';
 
 export default function Good({ navigation }) {
   const [heading, setHeading] = useState([]);
-  const [inputData, setInputData] = useState({ title: '', rating: '', body: '' });
+  const [newTitle, setNewTitle] = useState('');
 
   useEffect(() => {
     fetchData();
@@ -17,52 +17,39 @@ export default function Good({ navigation }) {
       .catch((error) => console.error(error));
   };
 
-  const addData = () => {
-    axios
-      .post('http://localhost:7000/good', {
-        title: inputData.title,
-        rating: inputData.rating,
-        body: inputData.body
-      })
-      .then((response) => {
-        const newItem = response.data.data;
-        fetchData(); // Fetch data again after adding the new item
-        setInputData({ title: '', rating: '', body: '' }); // Clear the input fields
-        navigation.navigate('Content', newItem); // Pass the newItem to the Content screen
-      })
-      .catch((error) => console.error(error));
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.post('http://localhost:7000/good', {
+        title: newTitle,
+      });
+      setHeading([...heading, response.data]);
+      setNewTitle('');
+    } catch (error) {
+      console.error('Error creating title:', error);
+    }
   };
 
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        placeholder="Title"
-        value={inputData.title}
-        onChangeText={(text) => setInputData({ ...inputData, title: text })}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Rating"
-        value={inputData.rating}
-        onChangeText={(text) => setInputData({ ...inputData, rating: text })}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Body"
-        value={inputData.body}
-        onChangeText={(text) => setInputData({ ...inputData, body: text })}
-      />
-      <Button title="Add Data" onPress={addData} />
-
       <FlatList
         data={heading}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => navigation.navigate('Content', item)}>
-            <Text style={styles.titleText}>{item.title}</Text>
+            <Text style={styles.titleText}>{item.title || ''}</Text>
           </TouchableOpacity>
         )}
       />
+
+      <View style={styles.formContainer}>
+        <Text style={styles.label}>Title</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter title"
+          value={newTitle}
+          onChangeText={(text) => setNewTitle(text)}
+        />
+        <Button title="Submit" onPress={handleSubmit} />
+      </View>
     </View>
   );
 }
@@ -72,6 +59,14 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     padding: 24,
+  },
+  formContainer: {
+    width: '100%',
+    marginBottom: 12,
+  },
+  label: {
+    fontSize: 18,
+    marginBottom: 6,
   },
   input: {
     height: 40,

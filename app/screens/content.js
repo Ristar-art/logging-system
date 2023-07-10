@@ -1,35 +1,37 @@
-import React from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
+import axios from 'axios';
 
 export default function Content({ navigation }) {
-  const handleAddData = () => {
-    fetch('http://localhost:7000/good', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        
-        body: 'This is a new good item',
-       
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Data added successfully:', data);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
+  const [body, setBody] = useState('');
+  
+
+  const handleAddData = async () => {
+    try {
+      const itemId = navigation.getParam('id');
+      await axios.patch(`http://localhost:7000/good/${itemId}`, {
+        body: body,
       });
+      setBody('');
+    } catch (error) {
+      console.error('Error updating the body:', error);
+    }
   };
+  
 
   return (
     <View style={styles.container}>
       <Text>{navigation.getParam('title')}</Text>
       <Text>{navigation.getParam('body')}</Text>
-      <Text>{navigation.getParam('rating')}</Text>
-      <Text>{navigation.getParam('id')}</Text>
-      <Button title="Add Data" onPress={handleAddData} />
+     
+     
+      <TextInput
+        style={styles.input}
+        placeholder="Enter body"
+        value={body}
+        onChangeText={(text) => setBody(text)}
+      />
+      <Button title="Submit" onPress={handleAddData} />
     </View>
   );
 }
@@ -39,5 +41,17 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     padding: 24,
+  },
+  label: {
+    fontSize: 18,
+    marginBottom: 6,
+  },
+  input: {
+    height: 40,
+    width: '100%',
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 12,
+    paddingLeft: 8,
   },
 });
